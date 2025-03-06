@@ -1,0 +1,49 @@
+name: build-and-publish
+
+on: [push]
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Check out Repository
+      uses: actions/checkout@v2
+
+    - name: Install Packages and Set-Up
+      run: |
+        sudo apt install flatpak flatpack-builder npm
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo -y
+        flatpak install app/org.electronjs.Electron2.BaseApp/x86_64/stable -y
+        flatpak install runtime/org.freedesktop.Sdk/x86_64/23.08 -y
+
+    - name: Prep Version String in package.json
+      run: |
+        echo "COMMIT="$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
+        echo "VERSION=$(cat VERSION)-$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
+        jq --arg version "${{ env.VERSION }}" '.version = $version' package.json > temp.json
+        mv temp.json package.json
+
+    - name: Run Build
+      run: |
+        npm install
+        npm run build
+
+    - name: Release Artifacts
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "${{ env.VERSION }}"
+        prerelease: true
+        title: "Development Build based on commit ${{ env.COMMIT }}" 
+        files: |
+          dist/qobuz-linux-${{ env.VERSION }}*.flatpak
+          qobuz-linux_${{ env.VERSION }}*.snap
+          qobuz-linux-${{ env.VERSION }}*.AppImage
+
+
+    
