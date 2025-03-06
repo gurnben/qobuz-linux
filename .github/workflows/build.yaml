@@ -33,7 +33,7 @@ jobs:
       run: |
         npm install
         # Uncomment to Run in Debug Mode
-        export DEBUG="@malept/flatpak-bundler"
+        # export DEBUG="@malept/flatpak-bundler"
         npm run build
 
     - name: Release Artifacts
@@ -45,8 +45,8 @@ jobs:
         title: "Development Build based on commit ${{ env.COMMIT }}" 
         files: |
           dist/qobuz-linux-${{ env.VERSION }}*.flatpak
-          qobuz-linux_${{ env.VERSION }}*.snap
-          qobuz-linux-${{ env.VERSION }}*.AppImage
+          dist/qobuz-linux_${{ env.VERSION }}*.snap
+          dist/qobuz-linux-${{ env.VERSION }}*.AppImage
 
 
     
