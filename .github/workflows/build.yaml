@@ -23,7 +23,7 @@ jobs:
 
     - name: Prep Version String in package.json
       run: |
-        version=$(cat VERSION)-$(git log --pretty=format:'%h' -1)"
+        version="$(cat VERSION)-$(git log --pretty=format:'%h' -1)"
         echo "COMMIT=$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
         echo "VERSION=$version" >> $GITHUB_ENV
         jq --arg version "$version" '.version = $version' package.json > temp.json
