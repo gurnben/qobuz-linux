@@ -27,13 +27,13 @@ jobs:
         echo "COMMIT=$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
         echo "VERSION=$version" >> $GITHUB_ENV
         jq --arg version "$version" '.version = $version' package.json > temp.json
-        cat temp.json
         mv temp.json package.json
 
     - name: Run Build
       run: |
-        cat package.json
         npm install
+        # Uncomment to Run in Debug Mode
+        export DEBUG="@malept/flatpak-bundler"
         npm run build
 
     - name: Release Artifacts
