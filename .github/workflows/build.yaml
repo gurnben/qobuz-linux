@@ -17,7 +17,6 @@ jobs:
     - name: Install Packages and Set-Up
       run: |
         sudo apt install flatpak flatpak-builder npm
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         flatpak install app/org.electronjs.Electron2.BaseApp/x86_64/stable -y
         flatpak install runtime/org.freedesktop.Sdk/x86_64/23.08 -y
 
