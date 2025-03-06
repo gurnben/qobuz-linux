@@ -26,10 +26,12 @@ jobs:
         echo "COMMIT=$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
         echo "VERSION=$(cat VERSION)-$(git log --pretty=format:'%h' -1)" >> $GITHUB_ENV
         jq --arg version "${{ env.VERSION }}" '.version = $version' package.json > temp.json
+        cat temp.json
         mv temp.json package.json
 
     - name: Run Build
       run: |
+        cat package.json
         npm install
         npm run build
 
