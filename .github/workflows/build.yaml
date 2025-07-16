@@ -38,7 +38,7 @@ jobs:
       with:
         tag_name: "${{ env.VERSION }}"
         prerelease: true
-        title: "Development Build based on commit ${{ env.COMMIT }}"
+        name: "Development Build based on commit ${{ env.COMMIT }}"
         files: |
           qobuz-linux-${{ env.VERSION }}.flatpak
 
