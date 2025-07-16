@@ -12,7 +12,7 @@ jobs:
     steps:
 
     - name: Check out Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Prep Version String in package.json
       run: |
@@ -22,16 +22,12 @@ jobs:
         jq --arg version "$version" '.version = $version' package.json > temp.json
         mv temp.json package.json
 
-    - name: Run Build
-      run: |
-        sudo apt install flatpak flatpak-builder npm python3-pip -y
-        pip install --user git+https://github.com/flatpak/flatpak-builder-tools.git#subdirectory=node
-        flatpak-node-generator npm package-lock.json --output flatpak/generated-sources.json
-        flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak install --user org.flatpak.Builder org.freedesktop.Sdk//24.08 org.freedesktop.Sdk.Extension.node24//24.08 org.freedesktop.Platform//24.08 org.electronjs.Electron2.BaseApp//24.08 -y
-        export XDG_DATA_DIRS="$XDG_DATA_DIRS:/var/lib/flatpak/exports/share:/home/runner/.local/share/flatpak/exports/share"
-        flatpak run org.flatpak.Builder --repo=_repo --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
-        flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+    - name: Build Flatpak
+      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      with:
+        manifest-path: flatpak/dev.mukkematti.qobuz-linux.yml
+        bundle: qobuz-linux-${{ env.VERSION }}.flatpak
+        cache-key: flatpak-builder-${{ github.sha }}
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
