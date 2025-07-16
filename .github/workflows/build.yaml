@@ -23,8 +23,8 @@ jobs:
         mkdir -p /app/var/lib/dbus
         dbus-uuidgen --ensure
         flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
-        flatpak build-bundle ~/.local/share/flatpak/repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux master
+        flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean --commit-id-file=commit-id _build flatpak/dev.mukkematti.qobuz-linux.yml
+        flatpak build-bundle ~/.local/share/flatpak/repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux $(cat commit-id)
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
