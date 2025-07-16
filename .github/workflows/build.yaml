@@ -41,7 +41,7 @@ jobs:
     - name: Release Artifacts
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        repo_token: "${{ secrets.GH_TOKEN }}"
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "${{ env.VERSION }}"
         prerelease: true
         title: "Development Build based on commit ${{ env.COMMIT }}" 
