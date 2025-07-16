@@ -17,18 +17,11 @@ jobs:
     - name: Check out Repository
       uses: actions/checkout@v4
 
-    - name: Install Xvfb
-      run: sudo apt-get update && sudo apt-get install -y xvfb
-
-    - name: Set git safe.directory
-      run: git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
-
     - name: Build Flatpak
-      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-      with:
-        manifest-path: flatpak/dev.mukkematti.qobuz-linux.yml
-        bundle: qobuz-linux-${{ env.VERSION }}.flatpak
-        cache-key: flatpak-builder-${{ github.sha }}
+      run: |
+        git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
+        flatpak-builder --user --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
+        flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
