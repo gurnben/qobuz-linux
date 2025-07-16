@@ -6,6 +6,9 @@ jobs:
   build:
     name: Build binaries and release preview build
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
+      options: --privileged
     permissions:
       contents: write
 
