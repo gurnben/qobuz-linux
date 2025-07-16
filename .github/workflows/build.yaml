@@ -20,7 +20,7 @@ jobs:
     - name: Build Flatpak
       run: |
         git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
-        sudo dbus-uuidgen --ensure
+        dbus-uuidgen --ensure
         flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
         flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
