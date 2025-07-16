@@ -23,7 +23,7 @@ jobs:
         mkdir -p /var/lib/dbus
         dbus-uuidgen --ensure=/var/lib/dbus/machine-id
         flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak-builder --user --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
+        xvfb-run flatpak-builder --user --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
         flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
