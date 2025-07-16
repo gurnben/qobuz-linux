@@ -34,12 +34,11 @@ jobs:
         flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: "softprops/action-gh-release@v2"
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ env.VERSION }}"
+        tag_name: "${{ env.VERSION }}"
         prerelease: true
-        title: "Development Build based on commit ${{ env.COMMIT }}" 
+        title: "Development Build based on commit ${{ env.COMMIT }}"
         files: |
           qobuz-linux-${{ env.VERSION }}.flatpak
 
