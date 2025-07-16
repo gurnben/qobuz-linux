@@ -24,7 +24,7 @@ jobs:
         dbus-uuidgen --ensure=/var/lib/dbus/machine-id
         flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         dbus-run-session -- flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
-        flatpak build-bundle --current-branch ~/.local/share/flatpak/repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+        flatpak build-bundle ~/.local/share/flatpak/repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux ${{ env.GITHUB_REF_NAME }}
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
