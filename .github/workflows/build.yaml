@@ -17,11 +17,17 @@ jobs:
     - name: Check out Repository
       uses: actions/checkout@v4
 
-    - name: Build Flatpak
+    - name: Build Flatpak (aarch64)
       run: |
         git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
-        flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
-        flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+        flatpak-builder --arch=aarch64 --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
+        flatpak build-bundle _repo qobuz-linux-aarch64-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+
+    - name: Build Flatpak (x86_64)
+      run: |
+        git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
+        flatpak-builder --arch=x86_64 --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml
+        flatpak build-bundle _repo qobuz-linux-x86_64-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
@@ -30,6 +36,7 @@ jobs:
         prerelease: true
         name: "Development Build based on commit ${{ env.COMMIT }}"
         files: |
-          qobuz-linux-${{ env.VERSION }}.flatpak
+          qobuz-linux-aarch64-${{ env.VERSION }}.flatpak
+          qobuz-linux-x86_64-${{ env.VERSION }}.flatpak
 
     
