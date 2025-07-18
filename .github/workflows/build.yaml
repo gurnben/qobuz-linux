@@ -25,7 +25,7 @@ jobs:
         flatpak --user remote-modify --enable flathub-beta
         git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
         flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean _build flatpak/dev.mukkematti.qobuz-linux.yml --extra-sources=generated-sources.json
-        flatpak build-bundle _repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+        flatpak build-bundle _build/repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
