@@ -5,21 +5,23 @@ on: [push]
 jobs:
   build:
     name: Build binaries and release preview build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     strategy:
       matrix:
-        arch: [ "x86_64", "aarch64" ]
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-latest-arm64
+
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write
 
     steps:
 
     - name: Check out Repository
       uses: actions/checkout@v4
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
 
     - name: Get Version and Commit
       id: get_version
