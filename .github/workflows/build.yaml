@@ -3,8 +3,8 @@ name: build-and-publish
 on: [push]
 
 jobs:
-  build:
-    name: Build binaries and release preview build
+  build-and-upload:
+    name: Build for ${{ matrix.arch }}
 
     strategy:
       matrix:
@@ -23,19 +23,13 @@ jobs:
     - name: Check out Repository
       uses: actions/checkout@v4
 
-    - name: Get Version and Commit
-      id: get_version
-      run: |
-        echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
-        echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
     - name: Install Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y flatpak flatpak-builder jq
         pipx install flatpak-node-generator
 
-    - name: Build Flatpak
+    - name: Build Flatpak repo
       run: |
         flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         flatpak remote-add --user --if-not-exists flathub-beta https://flathub.org/beta-repo/flathub-beta.flatpakrepo
@@ -44,7 +38,49 @@ jobs:
         git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
         flatpak-node-generator npm package-lock.json
         flatpak-builder --arch=${{ matrix.arch }} --verbose --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean --repo=repo _build flatpak/dev.mukkematti.qobuz-linux.yml
-        flatpak build-bundle repo qobuz-linux-${{ matrix.arch }}-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+
+    - name: Upload Flatpak repo artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: flatpak-repo-${{ matrix.arch }}
+        path: repo
+
+  package-and-release:
+    name: Package and release multi-arch Flatpak
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+    - name: Check out Repository
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y flatpak jq
+
+    - name: Download all architecture repos
+      uses: actions/download-artifact@v4
+      with:
+        path: repos
+
+    - name: Merge Flatpak repos
+      run: |
+        mkdir -p final-repo
+        cp -a repos/flatpak-repo-x86_64/* final-repo/
+        cp -a repos/flatpak-repo-aarch64/* final-repo/
+
+    - name: Get Version and Commit
+      id: get_version
+      run: |
+        echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+        echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Create multi-arch Flatpak bundle
+      run: |
+        flatpak build-bundle final-repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
@@ -52,7 +88,6 @@ jobs:
         tag_name: "${{ env.VERSION }}"
         prerelease: true
         name: "Development Build based on commit ${{ env.COMMIT }}"
-        files: |
-          qobuz-linux-${{ matrix.arch }}-${{ env.VERSION }}.flatpak
+        files: qobuz-linux-${{ env.VERSION }}.flatpak
 
     
