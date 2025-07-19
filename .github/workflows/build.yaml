@@ -33,6 +33,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y flatpak flatpak-builder jq
+        pipx install flatpak-node-generator
 
     - name: Build Flatpak
       run: |
