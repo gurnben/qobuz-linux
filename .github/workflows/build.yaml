@@ -12,10 +12,20 @@ jobs:
     permissions:
       contents: write
 
+    strategy:
+      matrix:
+        arch: [ "x86_64", "aarch64" ]
+
     steps:
 
     - name: Check out Repository
       uses: actions/checkout@v4
+
+    - name: Get Version and Commit
+      id: get_version
+      run: |
+        echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+        echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: Build Flatpak
       run: |
@@ -24,8 +34,8 @@ jobs:
         flatpak --user remote-modify --enable flathub
         flatpak --user remote-modify --enable flathub-beta
         git config --global --add safe.directory /__w/qobuz-linux/qobuz-linux
-        flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean --repo=repo _build flatpak/dev.mukkematti.qobuz-linux.yml --extra-sources=generated-sources.json
-        flatpak build-bundle repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
+        flatpak-builder --arch=${{ matrix.arch }} --verbose --user --disable-rofiles-fuse --install-deps-from=flathub --force-clean --repo=repo _build flatpak/dev.mukkematti.qobuz-linux.yml --extra-sources=generated-sources.json
+        flatpak build-bundle repo qobuz-linux-${{ matrix.arch }}-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
     - name: Release Artifacts
       uses: "softprops/action-gh-release@v2"
@@ -34,7 +44,6 @@ jobs:
         prerelease: true
         name: "Development Build based on commit ${{ env.COMMIT }}"
         files: |
-          qobuz-linux-aarch64-${{ env.VERSION }}.flatpak
-          qobuz-linux-x86_64-${{ env.VERSION }}.flatpak
+          qobuz-linux-${{ matrix.arch }}-${{ env.VERSION }}.flatpak
 
     
