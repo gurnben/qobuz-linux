@@ -6,9 +6,6 @@ jobs:
   build:
     name: Build binaries and release preview build
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
-      options: --privileged
     permissions:
       contents: write
 
@@ -21,17 +18,14 @@ jobs:
     - name: Check out Repository
       uses: actions/checkout@v4
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
     - name: Get Version and Commit
       id: get_version
       run: |
         echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
         echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-    - name: Set up binfmt
-      run: |
-        # The github action runner provided by default does not have binfmt support for arm64
-        # See: https://github.com/tonistiigi/binfmt?tab=readme-ov-file#qemu-user-static-register
-        docker run --rm --privileged tonistiigi/binfmt --install all
 
     - name: Build Flatpak
       run: |
