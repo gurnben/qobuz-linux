@@ -88,17 +88,28 @@ jobs:
       run: |
         echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
         echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "REPO_OWNER=$(echo ${{ github.repository }} | cut -d'/' -f1)" >> $GITHUB_ENV
 
     - name: Create multi-arch Flatpak bundle
       run: |
         flatpak build-bundle final-repo qobuz-linux-${{ env.VERSION }}.flatpak dev.mukkematti.qobuz-linux
 
-    - name: Release Artifacts
+    - name: Release Artifacts (Upstream)
+      if: github.repository == 'mattipunkt/qobuz-linux'
       uses: "softprops/action-gh-release@v2"
       with:
         tag_name: "${{ env.VERSION }}"
         prerelease: true
         name: "Development Build based on commit ${{ env.COMMIT }}"
+        files: qobuz-linux-${{ env.VERSION }}.flatpak
+
+    - name: Release Artifacts (Fork)
+      if: github.repository != 'mattipunkt/qobuz-linux'
+      uses: "softprops/action-gh-release@v2"
+      with:
+        tag_name: "${{ env.VERSION }}-${{ env.REPO_OWNER }}-${{ env.COMMIT }}"
+        prerelease: true
+        name: "Fork Build from ${{ github.repository }} - commit ${{ env.COMMIT }}"
         files: qobuz-linux-${{ env.VERSION }}.flatpak
 
     

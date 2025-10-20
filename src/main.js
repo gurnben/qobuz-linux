@@ -10,10 +10,17 @@ const createWindow = () => {
     win = new BrowserWindow({
       width: 1200,
       height: 800,
+      minWidth: 400,
+      minHeight: 300,
       icon: path.join(__dirname, "../resources/icons/clearicon.png"),
       useContentSize: true,
       frame: true,
-      titleBarStyle: 'default'
+      titleBarStyle: 'default',
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
+        contextIsolation: true
+      }
     })
     win.removeMenu()
     win.loadURL(qobuz_url)
