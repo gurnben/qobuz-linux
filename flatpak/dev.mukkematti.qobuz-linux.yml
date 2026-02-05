@@ -40,11 +40,14 @@ modules:
         npm_config_fund: 'false'
 
     build-commands:
-      - ls -la ..
-      - ls -la ../flatpak-node || echo "flatpak-node not found"
       - npm install --offline --no-audit --no-fund --ignore-scripts
       - |
-        . ../flatpak-node/electron-builder-arch-args.sh
+        case "$FLATPAK_ARCH" in
+          "i386") ELECTRON_BUILDER_ARCH_ARGS="--ia32" ;;
+          "x86_64") ELECTRON_BUILDER_ARCH_ARGS="--x64" ;;
+          "arm") ELECTRON_BUILDER_ARCH_ARGS="--armv7l" ;;
+          "aarch64") ELECTRON_BUILDER_ARCH_ARGS="--arm64" ;;
+        esac
         npm run builder -- $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --config.compression=store
       - mkdir -p ${FLATPAK_DEST}/qobuz-linux
       - cp -a dist/linux*unpacked/* ${FLATPAK_DEST}/qobuz-linux/
