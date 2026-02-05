@@ -51,6 +51,7 @@ modules:
         esac
         npm run builder -- $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --config.compression=store
       - mkdir -p ${FLATPAK_DEST}/qobuz-linux
+      - mkdir -p ${FLATPAK_DEST}/bin
       - cp -a dist/linux*unpacked/* ${FLATPAK_DEST}/qobuz-linux/
       - ln -sf /app/qobuz-linux/qobuz-linux ${FLATPAK_DEST}/bin/qobuz-linux
       - mkdir -p ${FLATPAK_DEST}/share/metainfo
