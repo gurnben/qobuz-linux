@@ -41,7 +41,6 @@ modules:
         npm_config_fund: 'false'
 
     build-commands:
-      - ls -R /run/build/qobuz-linux/flatpak-node/cache
       - npm install --offline --no-audit --no-fund --ignore-scripts
       - |
         case "$FLATPAK_ARCH" in
