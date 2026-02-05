@@ -32,6 +32,7 @@ modules:
     build-options:
       env:
         XDG_CACHE_HOME: /run/build/qobuz-linux/flatpak-node/cache
+        ELECTRON_CACHE: /run/build/qobuz-linux/flatpak-node/cache/electron
         npm_config_cache: /run/build/qobuz-linux/flatpak-node/npm-cache
         npm_config_offline: 'true'
         npm_config_progress: 'false'
@@ -40,6 +41,7 @@ modules:
         npm_config_fund: 'false'
 
     build-commands:
+      - ls -R /run/build/qobuz-linux/flatpak-node/cache
       - npm install --offline --no-audit --no-fund --ignore-scripts
       - |
         case "$FLATPAK_ARCH" in
