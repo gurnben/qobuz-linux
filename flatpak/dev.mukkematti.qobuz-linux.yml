@@ -40,6 +40,8 @@ modules:
         npm_config_fund: 'false'
 
     build-commands:
+      - ls -la ..
+      - ls -la ../flatpak-node || echo "flatpak-node not found"
       - npm install --offline --no-audit --no-fund --ignore-scripts
       - |
         . ../flatpak-node/electron-builder-arch-args.sh
