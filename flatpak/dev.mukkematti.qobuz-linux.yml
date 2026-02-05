@@ -44,8 +44,9 @@ modules:
       - |
         . ../flatpak-node/electron-builder-arch-args.sh
         npm run builder -- $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --config.compression=store
-      - cp -a dist/linux*unpacked/* ${FLATPAK_DEST}/
-      - install -Dm755 ${FLATPAK_DEST}/qobuz-linux ${FLATPAK_DEST}/bin/qobuz-linux
+      - mkdir -p ${FLATPAK_DEST}/qobuz-linux
+      - cp -a dist/linux*unpacked/* ${FLATPAK_DEST}/qobuz-linux/
+      - ln -sf /app/qobuz-linux/qobuz-linux ${FLATPAK_DEST}/bin/qobuz-linux
       - mkdir -p ${FLATPAK_DEST}/share/metainfo
       - appstreamcli news-to-metainfo --format=markdown NEWS build/dist/flatpak/share/metainfo/${FLATPAK_ID}.metainfo.xml.in ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml
       - appstreamcli validate --no-net --strict ${FLATPAK_DEST}/share/metainfo/${FLATPAK_ID}.metainfo.xml
