@@ -1,7 +1,7 @@
 appId: dev.mukkematti.qobuz-linux
-electronVersion: 31.7.7
+electronVersion: 41.0.3
 electronDownload:
-  version: 31.7.7
+  version: 41.0.3
   mirror: https://github.com/electron/electron/releases/download/v
 files:
   - "**/*"
