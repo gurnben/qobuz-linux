@@ -37,6 +37,8 @@ jobs:
 
     - name: Install npm dependencies and verify build
       run: |
+        APP_VERSION=$(cat VERSION)-$(git rev-parse --short HEAD)
+        npm pkg set version="$APP_VERSION"
         npm ci
         npm run build-base
 
@@ -69,7 +71,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y flatpak jq
+        sudo apt-get install -y flatpak
 
     - name: Download all architecture repos
       uses: actions/download-artifact@v4
@@ -85,14 +87,14 @@ jobs:
     - name: Get Version and Commit
       id: get_version
       run: |
-        VERSION=$(jq -r .version package.json)
         COMMIT=$(git rev-parse --short HEAD)
+        VERSION=$(cat VERSION)-${COMMIT}
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "COMMIT=$COMMIT" >> $GITHUB_ENV
         if [ "${{ github.repository_owner }}" != "mattipunkt" ]; then
-          echo "TAG_NAME=${VERSION}-${COMMIT}" >> $GITHUB_ENV
-        else
           echo "TAG_NAME=${VERSION}" >> $GITHUB_ENV
+        else
+          echo "TAG_NAME=$(cat VERSION)" >> $GITHUB_ENV
         fi
 
     - name: Create multi-arch Flatpak bundle
