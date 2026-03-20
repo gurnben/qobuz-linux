@@ -1,6 +1,10 @@
 const { app, BrowserWindow, Menu, Tray } = require('electron')
 var path = require('path');
 
+if (process.platform === 'linux') {
+    app.commandLine.appendSwitch('gtk-version', '3')
+}
+
 let appIcon = null
 let win = null
 
